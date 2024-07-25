@@ -1,26 +1,13 @@
-#!/usr/bin/env python3
-
-from random import choice as rc
-
-from faker import Faker
-
-from app import app
 from models import db, Movie
+from app import app
 
-fake = Faker()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 
-def make_movies():
-
-    Movie.query.delete()
-    
-    movies = []
-    for i in range(50):
-        m = Movie(title=fake.sentence(nb_words=4).title())
-        movies.append(m)
-
-    db.session.add_all(movies)
+    # Add initial movies
+    movie1 = Movie(title="Inception", year=2010)
+    movie2 = Movie(title="The Matrix", year=1999)
+    db.session.add(movie1)
+    db.session.add(movie2)
     db.session.commit()
-
-if __name__ == '__main__':
-    with app.app_context():
-        make_movies()
